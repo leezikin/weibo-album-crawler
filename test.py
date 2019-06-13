@@ -3,20 +3,35 @@ from selenium import webdriver
 import selenium.common.exceptions
 import os
 import time
+import json
 
 def login():
     browser.get("https://weibo.com/")
     login = 0
     while login != 1:
         login = input("完成登录后输入'1':")
+    save_cookies()
 
 
 def user_select_process(mode):
     if mode == 1:
-        filename = raw_input("归档文件名:")
+        filename = input("归档文件名:") # 非法字符处理
         album_process(filename)
         return 1
 
+def login_with_cookies():
+    browser.get("https://weibo.com/")
+    browser.delete_all_cookies()
+    with open('cookies','r', encoding='utf-8') as f:
+        jsonCookies = json.loads(f.read())
+    for jsonCookie in jsonCookies:
+        addCookie = dict(jsonCookie)
+        browser.add_cookie(addCookie)
+    browser.get("https://weibo.com/")
+
+
+def check_cookies_exist():
+    return os.path.exists("cookies")
 
 def album_process(filename):
     lastestLastLine = 0
@@ -64,29 +79,38 @@ def finishing_process():
     else:
         finishing_process()
 
+def save_cookies():
+    cookie = browser.get_cookies()
+    jsonCookies = json.dumps(cookie)
+    with open('cookies','w') as f:
+        f.write(jsonCookies)
 
 def get_last_line(filename):
-        filesize = os.path.getsize(filename)
-        if filesize == 0:
-            return None
-        else:
-            with open(filename, 'rb') as fp:
-                offset = -8
-                while -offset < filesize:
-                    fp.seek(offset, 2)
-                    lines = fp.readlines()
-                    if len(lines) >= 2:
-                        return lines[-1]
-                    else:
-                        offset *= 2
-                fp.seek(0)
+    filesize = os.path.getsize(filename)
+    if filesize == 0:
+        return None
+    else:
+        with open(filename, 'rb') as fp:
+            offset = -8
+            while -offset < filesize:
+                fp.seek(offset, 2)
                 lines = fp.readlines()
-                return lines[-1]
+                if len(lines) >= 2:
+                    return lines[-1]
+                else:
+                    offset *= 2
+            fp.seek(0)
+            lines = fp.readlines()
+            return lines[-1]
 
 
 if __name__ == '__main__':
     browser = webdriver.Chrome()
     browser.maximize_window()
-    login()
+    if check_cookies_exist:
+        print("检测到cookies即将自动登录，如需重新登录请删除目录下cookies文件")
+        login_with_cookies()
+    else:
+        login()
     print("请手动跳转至获取页面")
     user_select_process(1)
