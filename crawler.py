@@ -39,6 +39,7 @@ def album_process(filename):
         hello = browser.find_elements_by_css_selector("ul.photoList.clearfix > li > a > img")
         if lastestLastLine == 0 and os.path.exists(filename):
             lastLine = get_last_line(filename)
+            lastLine = lastLine.decode('utf-8')
             lastestLastLine = 1
             if lastLine != None:
                 lastLine = lastLine.split("\r\n")[0]
@@ -48,7 +49,7 @@ def album_process(filename):
             open(filename,'w').close()
 
         if hello:
-            listLastSrc = hello[-1].get_attribute('src').encode('raw_unicode_escape')
+            listLastSrc = hello[-1].get_attribute('src')
         if hello and listLastSrc != lastLine:
             writeFile = open(filename,'a+')
             for i in range(len(hello)):
