@@ -8,7 +8,7 @@ import json
 def login():
     browser.get("https://weibo.com/")
     login = 0
-    while login != 1:
+    while login != '1':
         login = input("完成登录后输入'1':")
     save_cookies()
 
@@ -31,15 +31,17 @@ def login_with_cookies():
 
 
 def check_cookies_exist():
-    return os.path.exists("cookies")
+    return os.path.exists('cookies')
 
 def album_process(filename):
     lastestLastLine = 0
+    currentFinnish = 0
     while 1 == 1:
         hello = browser.find_elements_by_css_selector("ul.photoList.clearfix > li > a > img")
         if lastestLastLine == 0 and os.path.exists(filename):
             lastLine = get_last_line(filename)
-            lastLine = lastLine.decode('utf-8')
+            if lastLine is not None:
+                lastLine = lastLine.decode('utf-8')
             lastestLastLine = 1
             if lastLine != None:
                 lastLine = lastLine.split("\r\n")[0]
@@ -66,16 +68,19 @@ def album_process(filename):
             except selenium.common.exceptions.NoSuchElementException:
                 print("找不到下一页")
                 break
+        elif not hello and currentFinnish == 0:
+            print("获取不了对应元素")
+            break
         time.sleep(0.75)
     finishing_process()
 
 
 def finishing_process():
     continueKey = input("是否继续工程(0,1):")
-    if continueKey == 1:
+    if continueKey is '1':
         print("请手动跳转至获取页面")
         user_select_process(1)
-    elif continueKey == 0:
+    elif continueKey is 0:
         exit()
     else:
         finishing_process()
