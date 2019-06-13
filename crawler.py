@@ -33,6 +33,7 @@ def login_with_cookies():
 def check_cookies_exist():
     return os.path.exists('cookies')
 
+
 def album_process(filename):
     lastestLastLine = 0
     currentFinnish = 0
