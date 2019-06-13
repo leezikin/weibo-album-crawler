@@ -5,6 +5,7 @@ import time
 import subprocess
 import sys
 
+
 def download(url,path):
     isDirExists = os.path.exists(path)
     if not isDirExists:
@@ -17,7 +18,6 @@ def download(url,path):
 def downloadForWindowsByAria2(link, file_name, txt_name):
     exe_path = r'D:\aria2\aria2c.exe'
     order = exe_path + ' -o %s/%s -s5 -x5 %s'%(txt_name, file_name, link)
-    order = order.encode('raw_unicode_escape')
     os.system(order)
 
 
@@ -33,7 +33,8 @@ if __name__ == '__main__':
     if len(sys.argv) == 2:
         txt_name = sys.argv[1].replace(".txt","")
     else:
-        txt_name = raw_input("TXT:")
+        txt_name = input("TXT:")
+        txt_name = txt_name+ ""
     isTxtExists = os.path.exists(txt_name + ".txt")
     if isTxtExists:
         mode = 1
