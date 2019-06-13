@@ -108,7 +108,7 @@ def get_last_line(filename):
 if __name__ == '__main__':
     browser = webdriver.Chrome()
     browser.maximize_window()
-    if check_cookies_exist:
+    if check_cookies_exist():
         print("检测到cookies即将自动登录，如需重新登录请删除目录下cookies文件")
         login_with_cookies()
     else:
